@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Random Image Generator</title>
+</head>
+<body>
+    <div class="imageContainer">
+        <img id="randomImage" src=""  style="max-width: 60%; height: 60%;">
+        <a href="/landing">Back to Upload</a>
+    </div>
+
+    <script>
+        // Function to fetch and display a new random image
+        function fetchRandomImage() {
+            fetch("/get_random_image")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.done) {
+                        // All images have been displayed, redirect to the landing page
+                        window.location.href = "/landing";
+                    } else if (data.image_url) {
+                        document.getElementById("randomImage").src = data.image_url;
+                    } else {
+                        alert("Error: No images found.");
+                    }
+                })
+                .catch(error => console.error("Error fetching image:", error));
+        }
+
+        // Get the timer interval (20, 40, or 60 seconds) from the URL or set a default
+        const urlParams = new URLSearchParams(window.location.search);
+        const interval = parseInt(urlParams.get("timer"));
+
+        // Set the interval to fetch a new random image
+        setInterval(fetchRandomImage, interval * 1000);
+
+        // Initial fetch when the page loads
+        fetchRandomImage();
+    </script>
+</body>
+</html>
